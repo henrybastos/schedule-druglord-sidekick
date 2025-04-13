@@ -1,0 +1,127 @@
+@import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/typography';
+@plugin "tailwindcss-animate";
+@plugin "@iconify/tailwind4";
+ 
+@custom-variant dark (&:is(.dark *));
+
+:root {
+   --primary: #545162;
+   --primary-subtle: #3C3A45;
+   --primary-muted: #2D2B34;
+   --primary-dark: #211F26;
+   
+   --secondary: #F7F4FE;
+   --secondary-subtle: #E6DDFC;
+   --secondary-muted: #D3CAEB;
+   --secondary-dark: #C1B6E0;
+}
+
+@theme {
+   --font-sans: 'Plus Jakarta Sans', 'Outfit', sans;
+
+   --color-primary: var(--primary);
+   --color-primary-subtle: var(--primary-subtle);
+   --color-primary-muted: var(--primary-muted);
+   --color-primary-dark: var(--primary-dark);
+   
+   --color-secondary: var(--secondary);
+   --color-secondary-subtle: var(--secondary-subtle);
+   --color-secondary-muted: var(--secondary-muted);
+   --color-secondary-dark: var(--secondary-dark);
+
+   /* Shadows */
+	/* --shadow-mini: 0px 1px 0px 1px rgba(0, 0, 0, 0.3);
+	--shadow-mini-inset: 0px 1px 0px 0px rgba(0, 0, 0, 0.5) inset;
+	--shadow-popover: 0px 7px 12px 3px hsla(0deg 0% 0% / 30%);
+	--shadow-kbd: 0px 2px 0px 0px rgba(255, 255, 255, 0.07);
+	--shadow-btn: 0px 1px 0px 1px rgba(0, 0, 0, 0.2);
+	--shadow-card: 0px 2px 0px 1px rgba(0, 0, 0, 0.4);
+	--shadow-date-field-focus: 0px 0px 0px 3px rgba(244, 244, 245, 0.1); */
+}
+
+@layer base {
+   html, body {
+      @apply flex items-center justify-center min-h-full w-full bg-primary-dark text-secondary;
+   }
+
+	html {
+		-webkit-text-size-adjust: 100%;
+		scrollbar-color: var(--primary);
+	}
+ 
+	::selection {
+		background: #fdffa4;
+		color: black;
+	}
+}
+
+@layer components {
+   .link {
+      @apply hover:stroke-neutral-50/80 focus-visible:ring-stone-50/80 rounded-xs focus-visible:outline-hidden inline-flex items-center gap-1 font-medium underline underline-offset-4 focus-visible:ring;
+   }
+
+	.input-sm { @apply inline-flex gap-x-3 items-center justify-between h-input-sm p-input-sm text-sm rounded-sm border-input-subtle; }
+	.input-md { @apply inline-flex gap-x-3 items-center justify-between h-input-md p-input-md text-sm rounded-sm border-input-subtle; }
+	
+	.btn-sm { @apply flex items-center justify-between h-input-sm text-sm rounded-sm; }
+	.btn-md { @apply flex items-center justify-between h-input-md text-sm rounded-sm; }
+
+   .btn-icon { @apply leading-0 aspect-square justify-center; }
+
+   .btn-outline { @apply bg-transparent text-secondary border-2 border-secondary-subtle/25 hover:border-secondary-subtle/50 transition-all cursor-pointer active:border-secondary-subtle/15; }
+   .btn-filled { @apply text-secondary border-2 border-secondary-subtle/25 hover:border-secondary-subtle/50 bg-primary-subtle/25 hover:bg-primary-subtle/50 transition-all cursor-pointer active:bg-primary-subtle/15 active:border-secondary-subtle/15; }
+
+   .badge {
+      @apply inline-flex rounded-sm px-2 py-1 uppercase text-xs bg-primary-muted text-stone-300 w-fit text-nowrap;
+   }
+}
+
+@layer utilities {
+   .select-side-animation {
+      @apply    
+         data-[side=bottom]:slide-in-from-top-2
+         data-[side=top]:slide-in-from-bottom-2
+         data-[side=left]:slide-in-from-right-2
+         data-[side=right]:slide-in-from-left-2
+      ;
+   }
+
+   .select-side-translate {
+      @apply    
+         data-[side=bottom]:translate-y-1 
+         data-[side=top]:-translate-y-1
+         data-[side=left]:-translate-x-1 
+         data-[side=right]:translate-x-1 
+      ;
+   }
+}
+
+@utility text-muted { @apply text-secondary/30; }
+@utility text-subtle { @apply text-secondary/50; }
+
+
+@utility border-input { @apply border-2 border-secondary/50; }
+@utility border-input-subtle { @apply border-2 border-secondary-subtle/25; }
+@utility border-input-muted { @apply border-2 border-secondary-muted/10; }
+
+@utility p-input-xs { @apply px-3; }
+@utility p-input-sm { @apply px-3.5; }
+@utility p-input-md { @apply px-4; }
+
+@utility h-input-xs { @apply h-8; }
+@utility h-input-sm { @apply h-9; }
+@utility h-input-md { @apply h-10; }
+@utility h-input-lg { @apply h-11; }
+@utility h-input-xl { @apply h-12; }
+
+@utility animate-pop-in {
+   @apply animate-in fade-in-0 zoom-in-95;
+}
+
+@utility animate-pop-out {
+   @apply animate-out fade-out-0 zoom-out-95;
+}
