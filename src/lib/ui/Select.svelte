@@ -17,7 +17,7 @@
 		disabled?: boolean;
 	}
  
-	let { value = $bindable(), options, contentProps, placeholder, class: className, ...restProps }: Props = $props();
+	let { value = $bindable(), options = $bindable(), contentProps, placeholder, class: className, ...restProps }: Props = $props();
  
 	const selectedLabel = $derived(options.find((item) => item.value === value)?.label);
 </script>

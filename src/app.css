@@ -9,6 +9,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+   --primary-light: #666273;
    --primary: #545162;
    --primary-subtle: #3C3A45;
    --primary-muted: #2D2B34;
@@ -23,6 +24,7 @@
 @theme {
    --font-sans: 'Plus Jakarta Sans', 'Outfit', sans;
 
+   --color-primary-light: var(--primary-light);
    --color-primary: var(--primary);
    --color-primary-subtle: var(--primary-subtle);
    --color-primary-muted: var(--primary-muted);
@@ -45,7 +47,7 @@
 
 @layer base {
    html, body {
-      @apply flex items-center justify-center min-h-full w-full bg-primary-dark text-secondary;
+      @apply flex flex-col items-center justify-center min-h-full w-full bg-primary-dark text-secondary;
    }
 
 	html {
@@ -64,8 +66,8 @@
       @apply hover:stroke-neutral-50/80 focus-visible:ring-stone-50/80 rounded-xs focus-visible:outline-hidden inline-flex items-center gap-1 font-medium underline underline-offset-4 focus-visible:ring;
    }
 
-	.input-sm { @apply inline-flex gap-x-3 items-center justify-between h-input-sm p-input-sm text-sm rounded-sm border-input-subtle; }
-	.input-md { @apply inline-flex gap-x-3 items-center justify-between h-input-md p-input-md text-sm rounded-sm border-input-subtle; }
+	.input-sm { @apply inline-flex gap-x-3 items-center justify-between h-input-sm p-input-sm text-sm rounded-sm border-input; }
+	.input-md { @apply inline-flex gap-x-3 items-center justify-between h-input-md p-input-md text-sm rounded-sm border-input; }
 	
 	.btn-sm { @apply flex items-center justify-between h-input-sm text-sm rounded-sm; }
 	.btn-md { @apply flex items-center justify-between h-input-md text-sm rounded-sm; }
@@ -76,7 +78,7 @@
    .btn-filled { @apply text-secondary border-2 border-secondary-subtle/25 hover:border-secondary-subtle/50 bg-primary-subtle/25 hover:bg-primary-subtle/50 transition-all cursor-pointer active:bg-primary-subtle/15 active:border-secondary-subtle/15; }
 
    .badge {
-      @apply inline-flex rounded-sm px-2 py-1 uppercase text-xs bg-primary-muted text-stone-300 w-fit text-nowrap;
+      @apply inline-flex rounded-sm px-2 py-1 uppercase text-xs bg-primary-muted text-stone-300 w-fit text-nowrap font-semibold;
    }
 }
 
@@ -104,9 +106,8 @@
 @utility text-subtle { @apply text-secondary/50; }
 
 
-@utility border-input { @apply border-2 border-secondary/50; }
-@utility border-input-subtle { @apply border-2 border-secondary-subtle/25; }
-@utility border-input-muted { @apply border-2 border-secondary-muted/10; }
+@utility border-input { @apply border-2 border-primary-light; }
+@utility border-input-muted { @apply border-2 border-primary; }
 
 @utility p-input-xs { @apply px-3; }
 @utility p-input-sm { @apply px-3.5; }

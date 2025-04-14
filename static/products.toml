@@ -1,0 +1,140 @@
+### ================================================================
+### DURACELL V3                                                       
+### ================================================================
+
+[[products]]
+value = "duracell-v3"
+label = "DURACELL V3"
+group = "methanphetamine"
+disabled = false
+price = { suggested = 262, asking = 400 }
+sellingsHistory = [
+   [365, 435, 405, 400, 410, 460] 
+]
+
+[[products.recipe]]
+product = "Meth"
+nextProductIngredient = "Battery"
+
+[[products.recipe]]
+product = "CIANETO"
+nextProductIngredient = "Paracetamol"
+
+[[products.recipe]]
+product = "Sweet Durkle"
+nextProductIngredient = "Viagra"
+
+[[products.recipe]]
+product = "Thick Balls"
+nextProductIngredient = "Motor Oil"
+
+[[products.recipe]]
+product = "Gorilla Cake"
+nextProductIngredient = "Energy Drink"
+
+[[products.recipe]]
+product = "White Cookies"
+nextProductIngredient = "Mouth Wash"
+
+[[products.recipe]]
+product = "Banana Cookies"
+nextProductIngredient = "Chili"
+
+[[products.recipe]]
+product = "DURACELL V2"
+nextProductIngredient = "Addy"
+
+[[products.recipe]]
+product = "DURACELL V3"
+
+### ================================================================
+### DARKER SHIT                                                       
+### ================================================================
+
+[[products]]
+value = "darker-shit"
+label = "DARKER SHIT"
+group = "weed"
+disabled = false
+price = { suggested = 142, asking = 230 }
+sellingsHistory = [
+   [230, 225]
+]
+
+[[products.recipe]]
+product = "Green Crack"
+nextProductIngredient = "Battery"
+
+[[products.recipe]]
+product = "Afghan Piss"
+nextProductIngredient = "Viagra"
+
+[[products.recipe]]
+product = "MERDA VERDE"
+nextProductIngredient = "Motor Oil"
+
+[[products.recipe]]
+product = "Bio Punch"
+nextProductIngredient = "Mouth Wash"
+
+[[products.recipe]]
+product = "BEBÊ CAGÂO"
+nextProductIngredient = "Iodine"
+
+[[products.recipe]]
+product = "Big Shitto"
+nextProductIngredient = "Addy"
+
+[[products.recipe]]
+product = "DARK SHIT"
+nextProductIngredient = "Horse Semen"
+
+[[products.recipe]]
+product = "DARKER SHIT"
+nextProductIngredient = ""
+
+### ================================================================
+### BIG CRACK                                                   
+### ================================================================
+
+[[products]]
+value = "big-crack"
+label = "Big Crack"
+group = "methanphetamine"
+disabled = false
+price = { suggested = 144, asking = 190 }
+sellingsHistory = [
+   [190]
+]
+
+[[products.recipe]]
+product = "OG Kush"
+nextProductIngredient = "Paracetamol"
+
+[[products.recipe]]
+product = "SABÃO DE PORRA"
+nextProductIngredient = "Viagra"
+
+[[products.recipe]]
+product = "A BOMBA"
+nextProductIngredient = "Battery"
+
+[[products.recipe]]
+product = "Miracle Cheese"
+nextProductIngredient = "Horse Semen"
+
+[[products.recipe]]
+product = "Banana Bud"
+nextProductIngredient = "Iodine"
+
+[[products.recipe]]
+product = "Big Cock"
+nextProductIngredient = "Addy"
+
+[[products.recipe]]
+product = "Death Slime"
+nextProductIngredient = "Mouth Wash"
+
+[[products.recipe]]
+product = "Big Crack"
+nextProductIngredient = ""

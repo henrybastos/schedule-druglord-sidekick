@@ -1,0 +1,76 @@
+{
+   "products": [ 
+      {
+         "value": "dark-shit",
+         "label": "DARK SHIT",
+         "group": "weed",
+         "disabled": false,
+         "price": { 
+            "suggested": 122, 
+            "asking": 155 
+         },
+         "recipe": [
+            { "product": "Green Crack",  "nextProductIngredient": "Battery" },
+            { "product": "Afghan Piss",  "nextProductIngredient": "Viagra" },
+            { "product": "MERDA VERDE",  "nextProductIngredient": "Motor Oil" },
+            { "product": "Bio Punch",    "nextProductIngredient": "Mouth Wash" },
+            { "product": "BEBÊ CAGÂO",   "nextProductIngredient": "Iodine" },
+            { "product": "Big Shitto",   "nextProductIngredient": "Addy" },
+            { "product": "DARK SHIT",    "nextProductIngredient": "" }
+         ]
+      },
+      {
+         "value": "darker-shit",
+         "label": "DARKER SHIT",
+         "group": "weed",
+         "disabled": false,
+         "price": { 
+            "suggested": 142, 
+            "asking": 230 
+         },
+         "recipe": [
+            { "product": "Green Crack",  "nextProductIngredient": "Battery" },
+            { "product": "Afghan Piss",  "nextProductIngredient": "Viagra" },
+            { "product": "MERDA VERDE",  "nextProductIngredient": "Motor Oil" },
+            { "product": "Bio Punch",    "nextProductIngredient": "Mouth Wash" },
+            { "product": "BEBÊ CAGÂO",   "nextProductIngredient": "Iodine" },
+            { "product": "Big Shitto",   "nextProductIngredient": "Addy" },
+            { "product": "DARK SHIT",    "nextProductIngredient": "Horse Semen" },
+            { "product": "DARKER SHIT",  "nextProductIngredient": "" }
+         ]
+      },
+      {
+         "value": "duracell-v3",
+         "label": "DURACELL V3",
+         "group": "methanphetamine",
+         "disabled": false,
+         "price": { 
+            "suggested": 262, 
+            "asking": 400
+         },
+         "recipe": [
+            { "product": "Meth",            "nextProductIngredient": "Battery" },
+            { "product": "CIANETO",         "nextProductIngredient": "Paracetamol" },
+            { "product": "Sweet Durkle",    "nextProductIngredient": "Viagra" },
+            { "product": "Thick Balls",     "nextProductIngredient": "Motor Oil" },
+            { "product": "Gorilla Cake",    "nextProductIngredient": "Energy Drink" },
+            { "product": "White Cookies",   "nextProductIngredient": "Mouth Wash" },
+            { "product": "Banana Cookies",  "nextProductIngredient": "Chili" },
+            { "product": "DURACELL V2",     "nextProductIngredient": "Addy" },
+            { "product": "DURACELL V3"     }
+         ],
+         "sellingsHistory": [
+            460
+         ]
+      },
+      {
+         "value": "a-bomba",
+         "label": "A BOMBA",
+         "disabled": false,
+         "price": { 
+            "suggested": 71, 
+            "asking": 95 
+         }
+      }
+   ]
+}
