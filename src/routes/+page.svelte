@@ -2,58 +2,152 @@
    import TOML, { type TomlPrimitive } from 'smol-toml';
    import Badge from "$lib/ui/Badge.svelte";
    import Select, { type SelectOption } from "$lib/ui/Select.svelte";
-   import { Button, Label } from "bits-ui";
-   import { onMount } from "svelte";
-    import Meter from '$lib/ui/Meter.svelte';
+   import { Label } from "bits-ui";
+   import { onMount, type Snippet } from "svelte";
+   // import Meter from '$lib/ui/Meter.svelte';
+   import ConfigDialog from './schedule/ConfigDialog.svelte';
+   import Button from '$lib/ui/Button.svelte';
+   import type { Product } from '$lib/types';
+   import Input from '$lib/ui/Input.svelte';
+    import Tabs from '$lib/ui/Tabs.svelte';
+    import SalesTabs from './schedule/SalesTabs.svelte';
 
-   interface Product {
-      value: string;
-      label: string;
-      group?: string;
-      disabled: boolean;
-      price: ProductPrice,
-      recipe?: ProductRecipeStep[],
-      sellingsHistory?: Array<number>;
-   }
-
-   type ProductPrice = {
-      suggested: number;
-      asking: number;
-   }
-
-   type ProductRecipeStep = {
-      product: string;
-      nextProductIngredient?: string;
-   }
-
-   let products: Map<string, Product> = $state(new Map());
+   let clients = $state<SelectOption[]>([
+      {
+         label: 'Jeff',
+         value: 'jeff',
+      },
+      {
+         label: 'Beth',
+         value: 'beth',
+      },
+      {
+         label: 'Charles',
+         value: 'charles',
+      },
+      {
+         label: 'Jennifer',
+         value: 'jennifer',
+      },
+      {
+         label: 'Trent',
+         value: 'trent',
+      },
+      {
+         label: 'Ludwig',
+         value: 'ludwig',
+      },
+      {
+         label: 'Eugene',
+         value: 'eugene',
+      },
+      {
+         label: 'Doris',
+         value: 'doris',
+      },
+      {
+         label: 'Kevin',
+         value: 'kevin',
+      },
+      {
+         label: 'Joyce',
+         value: 'joyce',
+      },
+      {
+         label: 'Dean',
+         value: 'dean',
+      },
+      {
+         label: 'Philip',
+         value: 'philip',
+      },
+      {
+         label: 'Mrs. Ming',
+         value: 'mrs-ming',
+      },
+      {
+         label: 'Elizabeth',
+         value: 'elizabeth',
+      },
+   ])
+   let products = $state<Map<string, Product>>(new Map());
+   let isConfigDialogOpen = $state(false);
+   let time = $state('00:00:00');
 
    let options: SelectOption[] = $derived(Array.from(products.values()).map(({ label, value, disabled, group }) => ({ label, value, disabled, group })));
 
-   let productName = $state('');
+   let selectedClient = $state('');
+   let selectedProduct = $state('');
+   let realProductPrice = $state(0);
    let amount = $state(1);
    
-   let product = $derived(products.get(productName));
+   let currentProduct = $derived<Product | undefined>(products.get(selectedProduct));
    
-   let priceAdvantage = $derived((product?.price?.asking ?? 0) * amount > Math.floor((product?.price?.suggested ?? 0) * amount * 1.3))
+   let priceAdvantage = $derived((currentProduct?.price?.asking ?? 0) * amount > Math.floor((currentProduct?.price?.suggested ?? 0) * amount * 1.3))
 
-   let sellings = $derived.by(() => {
-      if (product?.sellingsHistory) {
-         const total = product.sellingsHistory.flat().reduce((sum, num) => sum + num, 0);
-         const min = Math.min(...product.sellingsHistory.flat());
-         const max = Math.max(...product.sellingsHistory.flat());
-         const count = product.sellingsHistory.flat().length;
-         const avg = Number((total / count).toFixed(2));
+   // let sellings = $derived.by(() => {
+   //    if (product?.sellingsHistory) {
+   //       const total = product.sellingsHistory.flat().reduce((sum, num) => sum + num, 0);
+   //       const min = Math.min(...product.sellingsHistory.flat());
+   //       const max = Math.max(...product.sellingsHistory.flat());
+   //       const count = product.sellingsHistory.flat().length;
+   //       const avg = Number((total / count).toFixed(2));
 
-         return { total, min, max, avg, count };
+   //       return { total, min, max, avg, count };
+   //    }
+   // })
+
+   async function fetchProducts() {
+      const localStorageProducts = localStorage.getItem('products');
+      let jsonProducts;
+      
+      if (localStorageProducts) {
+         jsonProducts = JSON.parse(localStorageProducts);
+      } else {
+         console.error('No products found');
+         // const response = await fetch('/products.toml');
+         // if (response) {
+         //    jsonProducts = TOML.parse(await response.text()) as unknown as Record<string, Product[]>;
+         //    console.log(jsonProducts);
+         // } else {
+         //    console.error('No Products Manifest was found.');
+         // }
+      }  
+
+      if (jsonProducts?.products) {
+         products = new Map(jsonProducts.products.map((o: Product) => [o.value, o]));
+      } else {
+         console.error('Cade os podruto');
+      }
+   }
+
+   function addSale() {
+      const product = products.get(selectedProduct);
+
+      if (selectedClient && product) {
+         if (!product?.salesHistory) {
+            product.salesHistory = [];
+         }
+
+         product?.salesHistory.push({
+            customer: selectedClient,
+            amount: amount,
+            price: realProductPrice
+         })
+         currentProduct = products.get(selectedProduct);
+         localStorage.setItem('products', JSON.stringify({ products: Array.from(products.values()) }));
+      }
+   }
+
+   $effect(() => {
+      if (currentProduct?.price) {
+         realProductPrice = currentProduct.price.asking * amount;
       }
    })
 
    onMount(async () => {
-      const response = await fetch('/products.toml');
-      const tomlProducts = TOML.parse(await response.text()) as unknown as Record<string, Product[]>;
-
-      products = new Map(tomlProducts.products.map(o => [o.value, o]));
+      setInterval(() => time = new Date().toLocaleTimeString('pt-BR'), 1000);
+      await fetchProducts();
    });
 </script>
 
@@ -61,33 +155,55 @@
    <title>Schedule Druglord Sidekick</title>
 </svelte:head>
 
-<h1 class="w-full text-center text-2xl uppercase font-bold mb-6">Schedule Druglord Sidekick</h1>
+<div class="mb-6">
+   <h1 class="w-full text-center text-2xl uppercase font-bold">Schedule Druglord Sidekick</h1>
+   <span class="flex w-fit mx-auto font-semibold text-secondary-subtle/75">{ time }</span>
+</div>
 
-<main class="flex flex-col w-[55rem] bg-primary-subtle rounded-md p-6 gap-2">
-   <div class="border-b-2 border-b-primary pb-6 w-full">
-      <h2 class="mb-3 text-lg font-semibold">Product</h2>
+<main class="flex flex-col w-[55rem] bg-primary-subtle rounded-md p-6">
+   <div class="flex flex-col border-b-2 border-b-primary pb-6 w-full gap-3">
+      <div class="inline-flex justify-between w-full">
+         <h2 class="mb-3 text-lg font-semibold">Product</h2>
+         <Button variant="ghost" size="icon" onclick={() => isConfigDialogOpen = true}>
+            <i class="ti ti-settings text-xl"></i>
+         </Button>
+      </div>
       
-      <div class="inline-flex gap-x-3 w-full">
-         <Select class="w-full" type="single" bind:options={options} placeholder="Select a product" bind:value={productName}/>
+      <div class="inline-flex gap-x-3 w-full border-b-2 border-b-primary pb-6">
+         <Select class="w-full" type="single" bind:options={options} placeholder="Select a product" bind:value={selectedProduct}/>
          <input bind:value={amount} class="input-md w-[4rem] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" type="number" name="amount" id="amount">
          
          <div class="inline-flex">
-            <Button.Root onclick={() => amount++} class="btn-md btn-icon btn-outline rounded-r-none">
+            <Button variant="outline" size="icon" onclick={() => amount++} class="rounded-r-none">
                <i class="ti ti-chevron-up text-lg"></i>
-            </Button.Root>
-            
-            <Button.Root onclick={() => amount--} class="btn-md btn-icon btn-outline rounded-l-none border-l-0 ml-[-2px]">
+            </Button>
+
+            <Button variant="outline" size="icon" onclick={() => amount--} class="rounded-l-none border-l-0 ml-[-2px]">
                <i class="ti ti-chevron-down text-lg"></i>
-            </Button.Root>
+            </Button>
+         </div>
+      </div>
+
+      <div class="flex flex-col gap-3 w-full">
+         <div class="inline-flex justify-between w-full">
+            <h2 class="text-lg font-semibold">Sale</h2>
+         </div>
+
+         <div class="inline-flex gap-3">
+            <Select class="w-full" type="single" bind:options={clients} placeholder="Select a client" bind:value={selectedClient}/>
+            <Input icon="currency-dollar" type="number" bind:value={realProductPrice} class="w-40"/>
+            <Button onclick={addSale} variant="ghost" size="icon">
+               <i class="ti ti-plus text-lg"></i>
+            </Button>
          </div>
       </div>
    </div>
 
-   {#if product}
+   {#if currentProduct}
       <div class="border-b-2 border-b-primary pb-6">
          <h2 class="my-3 text-lg font-semibold">Price</h2>
    
-         {#if product?.price?.suggested}
+         {#if currentProduct?.price?.suggested}
             <!-- <div class="inline-flex gap-x-2">
                <Label.Root class="inline-flex font-medium">{ productLabel }</Label.Root>
                <span class="inline-flex rounded-sm px-2 py-1 uppercase text-xs bg-stone-800 w-fit text-nowrap">${ suggestedPrice }</span>
@@ -98,7 +214,7 @@
                   <span>Amount</span>
                   <span>
                      Suggested Price
-                     <Badge class="ml-1">${ product?.price?.suggested }</Badge>
+                     <Badge class="ml-1">${ currentProduct?.price?.suggested }</Badge>
                   </span>
                   <span>
                      Auto Price 
@@ -107,7 +223,7 @@
                   <span>
                      Asking Price
                      <Badge class="ml-1">
-                        ${ product?.price?.asking }
+                        ${ currentProduct?.price?.asking }
                      </Badge>
                   </span>
                </div>
@@ -115,31 +231,31 @@
                <div class="grid grid-cols-subgrid col-span-full">
                   <span class="flex">x{ amount }</span>
          
-                  <span class="flex">${ product?.price?.suggested * amount }</span>
+                  <span class="flex">${ currentProduct?.price?.suggested * amount }</span>
                   
                   <div class="inline-flex gap-x-3">
-                     <span data-advantage={priceAdvantage} class="flex data-[advantage=false]:text-green-500">${ Math.floor(product?.price?.suggested * amount * 1.3) }</span>
+                     <span data-advantage={priceAdvantage} class="flex data-[advantage=false]:text-green-500">${ Math.floor(currentProduct?.price?.suggested * amount * 1.3) }</span>
                   </div>
          
-                  {#if product?.price?.asking}
-                     <span data-advantage={priceAdvantage} class="flex data-[advantage=true]:text-green-500">${ product?.price?.asking * amount }</span>
+                  {#if currentProduct?.price?.asking}
+                     <span data-advantage={priceAdvantage} class="flex data-[advantage=true]:text-green-500">${ currentProduct?.price?.asking * amount }</span>
                   {:else}
                      <span class="flex text-muted">No asking price</span>
                   {/if}
                </div>
             </div>
          {:else}
-            <span class="text-red-500">Error: Product not registered ({ product })</span>
+            <span class="text-red-500">Error: Product not registered ({ currentProduct })</span>
          {/if}
       </div>
 
-      <div class="flex gap-x-3">
-         <div class="border-b-2 last:border-none border-b-primary pb-6 w-full last:pb-0">
-            <h2 class="my-3 text-lg font-semibold">Recipe</h2>
+      <div class="flex gap-3">
+         <div class="flex flex-col gap-3 w-full p-6">
+            <h2 class="text-lg font-semibold">Recipe</h2>
             
-            {#if product?.recipe}
+            {#if currentProduct?.recipe}
                <div class="grid grid-cols-[repeat(4,_min-content)] items-center justify-center gap-3 px-6 py-4 rounded-md mx-auto text-nowrap w-fit border-2 border-primary-muted">
-                  {#each product.recipe as step}
+                  {#each currentProduct.recipe as step}
                      <div class="grid grid-cols-subgrid col-span-full">
                         {#if step.nextProductIngredient}
                            <span>{ step.product }</span>
@@ -153,19 +269,16 @@
                   {/each}
                </div>
             {:else}
-               <span class="flex text-muted">No recipe registered for { product.label }</span>
+               <span class="flex text-muted">No recipe registered for { currentProduct.label }</span>
             {/if}
          </div>
    
-         <div class="border-b-2 last:border-none border-b-primary pb-6 w-full last:pb-0">
+         <SalesTabs bind:currentProduct/>
+
+         <!-- <div class="border-b-2 last:border-none border-b-primary pb-6 w-full last:pb-0">
             <h2 class="my-3 text-lg font-semibold">Sellings History</h2>
             
             {#if sellings}
-               <!-- {@const min = Math.min(...product.sellingsHistory.flat())}
-               {@const max = Math.max(...product.sellingsHistory.flat())}
-               {@const avg = product.sellingsHistory.reduce((sum, num) => sum + num, 0) / product.sellingsHistory.length}
-               <Meter {min} {max} label="Máxima" value={405} valueLabel="wtf"/> -->
-   
                <div class="grid grid-cols-2 w-full gap-y-3">
                   <div class="flex flex-col gap-y-1">
                      <span class="text-subtle font-semibold uppercase text-sm">Sellings</span>
@@ -206,9 +319,11 @@
             {:else}
                <span class="flex text-muted">No sellings history of { product.label }</span>
             {/if}
-         </div>
+         </div> -->
       </div>
    {:else}
-   <span class="flex text-muted">No product selected</span>
+      <span class="flex text-muted">No product selected</span>
    {/if}
 </main>
+
+<ConfigDialog onchange={fetchProducts} bind:open={isConfigDialogOpen} />

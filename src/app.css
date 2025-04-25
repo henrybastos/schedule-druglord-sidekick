@@ -35,6 +35,8 @@
    --color-secondary-muted: var(--secondary-muted);
    --color-secondary-dark: var(--secondary-dark);
 
+   --animate-skeleton: skeleton 2s linear infinite;
+
    /* Shadows */
 	/* --shadow-mini: 0px 1px 0px 1px rgba(0, 0, 0, 0.3);
 	--shadow-mini-inset: 0px 1px 0px 0px rgba(0, 0, 0, 0.5) inset;
@@ -43,6 +45,22 @@
 	--shadow-btn: 0px 1px 0px 1px rgba(0, 0, 0, 0.2);
 	--shadow-card: 0px 2px 0px 1px rgba(0, 0, 0, 0.4);
 	--shadow-date-field-focus: 0px 0px 0px 3px rgba(244, 244, 245, 0.1); */
+
+   @keyframes skeleton {
+      0% {
+        background-position: 50%;
+        opacity: 35%;
+      }
+      
+      50% {
+        opacity: 100%;
+      }
+      
+      100% {
+        background-position: -150%;
+        opacity: 35%;
+      }
+    }
 }
 
 @layer base {
@@ -105,9 +123,12 @@
 @utility text-muted { @apply text-secondary/30; }
 @utility text-subtle { @apply text-secondary/50; }
 
-
 @utility border-input { @apply border-2 border-primary-light; }
 @utility border-input-muted { @apply border-2 border-primary; }
+
+@utility focus-visible-outline { 
+   @apply focus-visible:outline-solid focus-visible:outline-secondary-dark focus-visible:outline-2 focus-visible:outline-offset-2; 
+ }
 
 @utility p-input-xs { @apply px-3; }
 @utility p-input-sm { @apply px-3.5; }
@@ -119,10 +140,20 @@
 @utility h-input-lg { @apply h-11; }
 @utility h-input-xl { @apply h-12; }
 
-@utility animate-pop-in {
-   @apply animate-in fade-in-0 zoom-in-95;
+@utility animate-pop-in { @apply animate-in fade-in-0 zoom-in-95; }
+@utility animate-pop-out { @apply animate-out fade-out-0 zoom-out-95; }
+
+@utility skeleton { 
+   @apply animate-skeleton bg-linear-[105deg,var(--color-primary-subtle)_0%_40%,_transparent_45%,_var(--color-primary-subtle)_50%_100%] bg-[size:200%]; 
 }
 
-@utility animate-pop-out {
-   @apply animate-out fade-out-0 zoom-out-95;
+@utility hide-input-number-arrows {
+   .hide-number-arrows::-webkit-inner-spin-button,
+   .hide-number-arrows::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+   }
+   .hide-number-arrows {
+      -moz-appearance: textfield; /* Firefox */
+   }
 }

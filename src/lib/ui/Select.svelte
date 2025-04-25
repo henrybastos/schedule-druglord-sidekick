@@ -1,6 +1,13 @@
 <script lang="ts">
-   import { cn } from "$lib";
+   import { cn } from "$lib/utils";
 	import { Select, type WithoutChildren } from "bits-ui";
+
+	export type SelectOption = { 
+		value: string; 
+		label: string; 
+		group?: string; 
+		disabled?: boolean;
+	}
  
 	type Props = WithoutChildren<Select.RootProps> & {
 		placeholder?: string;
@@ -9,13 +16,6 @@
 		class?: string;
 		// any other specific component props if needed
 	};
-
-	export type SelectOption = { 
-		value: string; 
-		label: string; 
-		group?: string; 
-		disabled?: boolean;
-	}
  
 	let { value = $bindable(), options = $bindable(), contentProps, placeholder, class: className, ...restProps }: Props = $props();
  
@@ -41,7 +41,7 @@ from the perspective of the consumer of this component, it will be typed appropr
 
 			<Select.Viewport>
 				{#if options.some(o => o?.group)}
-					{#each Array.from(new Set(options.map(o => o?.group))) as group}
+					{#each Array.from(new Set(options.map(o => o?.group))) as group (group)}
 						<Select.Group>
 							<Select.GroupHeading class="inline-flex items-center uppercase text-xs font-medium text-subtle py-1">
 								<span class="bg-primary-dark px-3">{ group ?? 'Ungrouped' }</span>
@@ -49,7 +49,7 @@ from the perspective of the consumer of this component, it will be typed appropr
 							</Select.GroupHeading>
 
 							{#each options.filter(o => o.group == group) as option (option.value)}	
-								<Select.Item class="outline-hidden data-disabled:opacity-50 flex h-input-md w-full select-none items-center p-3 text-sm cursor-pointer data-highlighted:bg-primary-muted data-highlighted:data-disabled:bg-transparent data-highlighted:data-disabled:cursor-not-allowed transition-all rounded-sm capitalize" value={option.value} label={option.label} disabled={option.disabled}>
+								<Select.Item value={option.value} label={option.label} disabled={option.disabled} class="outline-hidden data-disabled:opacity-50 flex h-input-md w-full select-none items-center p-3 text-sm cursor-pointer data-highlighted:bg-primary-muted data-highlighted:data-disabled:bg-transparent data-highlighted:data-disabled:cursor-not-allowed transition-all rounded-sm capitalize">
 									{#snippet children({ selected })}
 										{option.label}
 									
@@ -62,6 +62,20 @@ from the perspective of the consumer of this component, it will be typed appropr
 								</Select.Item>
 							{/each}
 						</Select.Group>
+					{/each}
+				{:else}
+					{#each options as option (option.value)}	
+						<Select.Item value={option.value} label={option.label} disabled={option.disabled} class="outline-hidden data-disabled:opacity-50 flex h-input-md w-full select-none items-center p-3 text-sm cursor-pointer data-highlighted:bg-primary-muted data-highlighted:data-disabled:bg-transparent data-highlighted:data-disabled:cursor-not-allowed transition-all rounded-sm capitalize">
+							{#snippet children({ selected })}
+								{option.label}
+							
+								{#if selected}
+									<div class="ml-auto">
+										<i class="ti ti-check text-secondary text-xl"></i>
+									</div>
+								{/if}
+							{/snippet}
+						</Select.Item>
 					{/each}
 				{/if}
 			</Select.Viewport>
