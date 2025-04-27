@@ -11,8 +11,9 @@
    import Input from '$lib/ui/Input.svelte';
     import Tabs from '$lib/ui/Tabs.svelte';
     import SalesTabs from './schedule/SalesTabs.svelte';
+    import _ from 'lodash';
 
-   let clients = $state<SelectOption[]>([
+   const clients: SelectOption[] = _.sortBy([
       {
          label: 'Jeff',
          value: 'jeff',
@@ -69,7 +70,36 @@
          label: 'Elizabeth',
          value: 'elizabeth',
       },
-   ])
+      {
+         label: 'Louis',
+         value: 'louis',
+      },
+      {
+         label: 'Greg',
+         value: 'greg',
+      },
+      {
+         label: 'Randy',
+         value: 'randy',
+      },
+      {
+         label: 'Chloe',
+         value: 'chloe',
+      },
+      {
+         label: 'Mick',
+         value: 'mick',
+      },
+      {
+         label: 'Meg',
+         value: 'meg',
+      },
+      {
+         label: 'Lucy',
+         value: 'lucy',
+      },
+   ], ({ value }) => value);
+
    let products = $state<Map<string, Product>>(new Map());
    let isConfigDialogOpen = $state(false);
    let time = $state('00:00:00');
@@ -135,8 +165,12 @@
             price: realProductPrice
          })
          currentProduct = products.get(selectedProduct);
-         localStorage.setItem('products', JSON.stringify({ products: Array.from(products.values()) }));
+         saveProductsOnLocalStorage()
       }
+   }
+
+   function saveProductsOnLocalStorage() {
+      localStorage.setItem('products', JSON.stringify({ products: Array.from(products.values()) }));
    }
 
    $effect(() => {
@@ -160,7 +194,7 @@
    <span class="flex w-fit mx-auto font-semibold text-secondary-subtle/75">{ time }</span>
 </div>
 
-<main class="flex flex-col w-[55rem] bg-primary-subtle rounded-md p-6">
+<main class="flex flex-col w-5xl bg-primary-subtle rounded-md p-6">
    <div class="flex flex-col border-b-2 border-b-primary pb-6 w-full gap-3">
       <div class="inline-flex justify-between w-full">
          <h2 class="mb-3 text-lg font-semibold">Product</h2>
@@ -178,24 +212,17 @@
                <i class="ti ti-chevron-up text-lg"></i>
             </Button>
 
-            <Button variant="outline" size="icon" onclick={() => amount--} class="rounded-l-none border-l-0 ml-[-2px]">
+            <Button variant="outline" size="icon" onclick={() => amount--} class="rounded-l-none border-l-0">
                <i class="ti ti-chevron-down text-lg"></i>
             </Button>
          </div>
-      </div>
 
-      <div class="flex flex-col gap-3 w-full">
-         <div class="inline-flex justify-between w-full">
-            <h2 class="text-lg font-semibold">Sale</h2>
-         </div>
+         <Select class="w-full" type="single" options={clients} placeholder="Select a client" bind:value={selectedClient}/>
 
-         <div class="inline-flex gap-3">
-            <Select class="w-full" type="single" bind:options={clients} placeholder="Select a client" bind:value={selectedClient}/>
-            <Input icon="currency-dollar" type="number" bind:value={realProductPrice} class="w-40"/>
-            <Button onclick={addSale} variant="ghost" size="icon">
-               <i class="ti ti-plus text-lg"></i>
-            </Button>
-         </div>
+         <Input icon="currency-dollar" type="number" bind:value={realProductPrice} class="w-40"/>
+         <Button onclick={addSale} variant="ghost" size="icon">
+            <i class="ti ti-plus text-lg"></i>
+         </Button>
       </div>
    </div>
 
@@ -273,7 +300,7 @@
             {/if}
          </div>
    
-         <SalesTabs bind:currentProduct/>
+         <SalesTabs onSaleDeleted={saveProductsOnLocalStorage} bind:currentProduct/>
 
          <!-- <div class="border-b-2 last:border-none border-b-primary pb-6 w-full last:pb-0">
             <h2 class="my-3 text-lg font-semibold">Sellings History</h2>

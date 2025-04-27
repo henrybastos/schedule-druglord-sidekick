@@ -30,6 +30,7 @@
 	<ScrollArea.Viewport class={cn("h-full w-full", className)}>
 		{@render children?.()}
 	</ScrollArea.Viewport>
+	
 	{#if orientation === "vertical" || orientation === "both"}
 		{@render Scrollbar({ orientation: "vertical" })}
 	{/if}

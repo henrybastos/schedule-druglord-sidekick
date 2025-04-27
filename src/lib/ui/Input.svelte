@@ -7,8 +7,8 @@
 		base: "inline-flex items-center justify-between rounded-sm border-2 border-primary-light focus-visible-outline transition-all duration-75 data-[invalid=true]:border-red-500 text-secondary font-semibold [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-inner-outer-button]:appearance-none",
 		variants: {
 			size: {
-				default: "h-10 px-3 gap-x-3 text-lg",
-				sm: "h-9 px-2 gap-x-2 text-base",
+				default: "h-10 px-3 gap-x-3 text-base",
+				sm: "h-9 px-2 gap-x-2 text-sm",
 			},
 		},
 		defaultVariants: {
