@@ -7,100 +7,24 @@
    // import Meter from '$lib/ui/Meter.svelte';
    import ConfigDialog from './schedule/ConfigDialog.svelte';
    import Button from '$lib/ui/Button.svelte';
-   import type { Product } from '$lib/types';
+   import type { Product, SalesHistory } from '$lib/types';
    import Input from '$lib/ui/Input.svelte';
-    import Tabs from '$lib/ui/Tabs.svelte';
-    import SalesTabs from './schedule/SalesTabs.svelte';
-    import _ from 'lodash';
+   import SalesTabs from './schedule/SalesTabs.svelte';
+   import _ from 'lodash';
+   import { nanoid } from 'nanoid';
+   import { CustomersList } from '$lib';
+    import { SvelteMap } from 'svelte/reactivity';
 
-   const clients: SelectOption[] = _.sortBy([
-      {
-         label: 'Jeff',
-         value: 'jeff',
-      },
-      {
-         label: 'Beth',
-         value: 'beth',
-      },
-      {
-         label: 'Charles',
-         value: 'charles',
-      },
-      {
-         label: 'Jennifer',
-         value: 'jennifer',
-      },
-      {
-         label: 'Trent',
-         value: 'trent',
-      },
-      {
-         label: 'Ludwig',
-         value: 'ludwig',
-      },
-      {
-         label: 'Eugene',
-         value: 'eugene',
-      },
-      {
-         label: 'Doris',
-         value: 'doris',
-      },
-      {
-         label: 'Kevin',
-         value: 'kevin',
-      },
-      {
-         label: 'Joyce',
-         value: 'joyce',
-      },
-      {
-         label: 'Dean',
-         value: 'dean',
-      },
-      {
-         label: 'Philip',
-         value: 'philip',
-      },
-      {
-         label: 'Mrs. Ming',
-         value: 'mrs-ming',
-      },
-      {
-         label: 'Elizabeth',
-         value: 'elizabeth',
-      },
-      {
-         label: 'Louis',
-         value: 'louis',
-      },
-      {
-         label: 'Greg',
-         value: 'greg',
-      },
-      {
-         label: 'Randy',
-         value: 'randy',
-      },
-      {
-         label: 'Chloe',
-         value: 'chloe',
-      },
-      {
-         label: 'Mick',
-         value: 'mick',
-      },
-      {
-         label: 'Meg',
-         value: 'meg',
-      },
-      {
-         label: 'Lucy',
-         value: 'lucy',
-      },
-   ], ({ value }) => value);
+   // {
+   //    "Product": "mouthwash",
+   //    "Mixer": "granddaddypurple",
+   //    "Output": "ogmint"
+   // },
 
-   let products = $state<Map<string, Product>>(new Map());
+   const customers: SelectOption[] = CustomersList.sort().map(c => ({ label: c, value: _.kebabCase(c) }));
+
+   let products = $state<Map<string, Product>>(new SvelteMap());
+   let sales = $state<Map<string, SalesHistory>>(new SvelteMap());
    let isConfigDialogOpen = $state(false);
    let time = $state('00:00:00');
 
@@ -112,6 +36,7 @@
    let amount = $state(1);
    
    let currentProduct = $derived<Product | undefined>(products.get(selectedProduct));
+   let currentSales = $derived(sales.get(selectedProduct) ?? []);
    
    let priceAdvantage = $derived((currentProduct?.price?.asking ?? 0) * amount > Math.floor((currentProduct?.price?.suggested ?? 0) * amount * 1.3))
 
@@ -145,32 +70,39 @@
       }  
 
       if (jsonProducts?.products) {
-         products = new Map(jsonProducts.products.map((o: Product) => [o.value, o]));
+         products = new SvelteMap(jsonProducts.products.map((o: Product) => [o.value, o]));
       } else {
          console.error('Cade os podruto');
       }
    }
 
    function addSale() {
-      const product = products.get(selectedProduct);
+      const salesHistory = sales.get(selectedProduct);
 
-      if (selectedClient && product) {
-         if (!product?.salesHistory) {
-            product.salesHistory = [];
+      if (selectedClient && salesHistory) {
+         if (!salesHistory) {
+            sales.set(selectedProduct, []);
          }
 
-         product?.salesHistory.push({
+         const newSale = {
+            id: nanoid(),
+            createdAt: Date.now(),
             customer: selectedClient,
             amount: amount,
             price: realProductPrice
-         })
-         currentProduct = products.get(selectedProduct);
+         }
+
+         sales.set(selectedProduct, [newSale, ...salesHistory]);
+         currentSales = sales.get(selectedProduct) ?? currentSales;
+         // currentProduct = products.get(selectedProduct);
          saveProductsOnLocalStorage()
       }
    }
 
    function saveProductsOnLocalStorage() {
+      sales.set(selectedProduct, currentSales);
       localStorage.setItem('products', JSON.stringify({ products: Array.from(products.values()) }));
+      localStorage.setItem('schedule-druglord-sidekick-all-sales', JSON.stringify(Object.fromEntries(sales.entries())));
    }
 
    $effect(() => {
@@ -180,6 +112,20 @@
    })
 
    onMount(async () => {
+      let localStorageSales = localStorage.getItem('schedule-druglord-sidekick-all-sales');
+      
+      if (!localStorageSales) {
+         localStorage.setItem('schedule-druglord-sidekick-all-sales', JSON.stringify([]));
+         sales = new SvelteMap([]);
+      } else {
+         const parsedSales = JSON.parse(localStorageSales);
+
+         if (parsedSales) {
+            sales = new SvelteMap(Object.entries(parsedSales));
+            console.log('SALES', sales);
+         }
+      }
+
       setInterval(() => time = new Date().toLocaleTimeString('pt-BR'), 1000);
       await fetchProducts();
    });
@@ -217,7 +163,7 @@
             </Button>
          </div>
 
-         <Select class="w-full" type="single" options={clients} placeholder="Select a client" bind:value={selectedClient}/>
+         <Select class="w-full" type="single" options={customers} placeholder="Select a client" bind:value={selectedClient}/>
 
          <Input icon="currency-dollar" type="number" bind:value={realProductPrice} class="w-40"/>
          <Button onclick={addSale} variant="ghost" size="icon">
@@ -300,7 +246,7 @@
             {/if}
          </div>
    
-         <SalesTabs onSaleDeleted={saveProductsOnLocalStorage} bind:currentProduct/>
+         <SalesTabs bind:currentSales onSaleDeleted={saveProductsOnLocalStorage} bind:currentProduct/>
 
          <!-- <div class="border-b-2 last:border-none border-b-primary pb-6 w-full last:pb-0">
             <h2 class="my-3 text-lg font-semibold">Sellings History</h2>

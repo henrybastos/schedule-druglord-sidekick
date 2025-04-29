@@ -1,5 +1,38 @@
 import type { IngredientsData } from "./types";
 
+export const CustomersList = [
+   'Jeff',
+   'Beth',
+   'Charles',
+   'Jennifer',
+   'Trent',
+   'Ludwig',
+   'Eugene',
+   'Doris',
+   'Kevin',
+   'Joyce',
+   'Dean',
+   'Philip',
+   'Mrs. Ming',
+   'Elizabeth',
+   'Louis',
+   'Greg',
+   'Randy',
+   'Chloe',
+   'Mick',
+   'Meg',
+   'Lucy',
+   'Marco',
+   'Anna',
+   'Cranky',
+   'Lisa',
+   'Genghis',
+   'Javier',
+   'Mac',
+   'Billy',
+   'Melissa',
+]
+
 export const ProductIngredients: IngredientsData = {
    'addy': {
       label: 'Addy',

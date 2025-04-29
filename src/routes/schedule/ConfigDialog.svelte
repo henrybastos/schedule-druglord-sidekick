@@ -7,40 +7,9 @@
    import Button from "$lib/ui/Button.svelte";
    import ScrollArea from "$lib/ui/ScrollArea.svelte";
    import type { Product } from "$lib/types";
+    import { Tabs } from "bits-ui";
 
-   let defaultProducts: Array<Product> = [
-      {
-         value: "redneck-shit",
-         label: "Redneck Shit",
-         group: "methanphetamine",
-         disabled: false,
-         price: {
-            suggested: 144,
-            asking: 190,
-         },
-         salesHistory: [
-            { buyer: 'Kaitlyn', amount: 3, price: 570 }
-         ],
-         recipe: [
-            {
-               product: "OG Kush",
-               nextProductIngredient: "viagor",
-            },
-            {
-               product: "Eating Pussy",
-               nextProductIngredient: "horse-semen",
-            },
-            {
-               product: "Sucking Dick",
-               nextProductIngredient: "addy",
-            },
-            {
-               product: "Kicking Ass",
-               nextProductIngredient: "battery",
-            },
-         ],
-      },
-   ];
+   let defaultProducts: Array<Product> = [];
 
    const identationSize = 2;
    let { open = $bindable(), onchange } = $props();
@@ -49,6 +18,7 @@
    let errorLabel = $state();
    let changes = $state(false);
    let changesLabel = $derived(changes ? 'Unsaved changes' : undefined);
+   let tabsValue = $state('products-tab');
 
    function saveProducts() {
       if (productsCM) {
@@ -123,10 +93,8 @@
 </script>
 
 <Dialog 
-   class="max-w-5xl"
-   contentProps={{ 
-      interactOutsideBehavior: changes ? 'ignore' : 'close',
-   }} 
+   class="max-w-5xl min-h-[40rem]"
+   contentProps={{ interactOutsideBehavior: changes ? 'ignore' : 'close' }} 
    bind:open
 >
    {#snippet title()}
@@ -139,24 +107,47 @@
       </Button>
    {/snippet}
 
-   <ScrollArea orientation="both" class="max-h-[40rem]">
-      <CodeMirror
-         bind:value={productsCM}
-         on:change={() => changes = true}
-         lang={json()}
-         theme={dracula}
-      />
-   </ScrollArea>
+   <Tabs.Root bind:value={tabsValue}>
+      <Tabs.List class="flex w-full border-2 border-input-muted rounded-md p-1 gap-1 mt-3">
+         <Tabs.Trigger class="w-full" value="products-tab">
+            <Button class="w-full" size="sm" variant={tabsValue == 'products-tab' ? 'default' : 'ghost'}>Products</Button>
+         </Tabs.Trigger>
 
-   <span data-error={errorLabel != undefined} class="w-full text-right mt-3 text-secondary-subtle data-[error=true]:text-red-500">{ errorLabel ?? changesLabel }</span>
+         <Tabs.Trigger class="w-full" value="customers-tab">
+            <Button class="w-full" size="sm" variant={tabsValue == 'customers-tab' ? 'default' : 'ghost'}>Customers</Button>
+         </Tabs.Trigger>
+      </Tabs.List>
 
-   <div class="flex flex-row-reverse mt-3 gap-x-3">
-      <Button size="icon" variant="ghost" onclick={fetchProducts}>
-         <i class="ti ti-reload text-xl"></i>
-      </Button>
-      <Button disabled={!changes} onclick={saveProducts}>Save</Button>
-      <Button variant="outline" onclick={() => open = false}>Cancel</Button>
-      <Button variant="ghost" onclick={loadDefaultProducts}>Load default data</Button>
-      <Button variant="ghost" onclick={saveProductsBackup}>Save backup</Button>
-   </div>
+      <Tabs.Content value="products-tab">
+         <h2 class="text-lg font-semibold my-3">Products</h2>
+
+         <ScrollArea orientation="both" class="max-h-[40rem]">
+            <CodeMirror
+               bind:value={productsCM}
+               on:change={() => changes = true}
+               lang={json()}
+               theme={dracula}
+               class="text-base"
+            />
+         </ScrollArea>
+      
+         <span data-error={errorLabel != undefined} class="w-full text-right mt-3 text-secondary-subtle data-[error=true]:text-red-500">{ errorLabel ?? changesLabel }</span>
+      
+         <div class="flex flex-row-reverse mt-3 gap-x-3">
+            <Button size="icon" variant="ghost" onclick={fetchProducts}>
+               <i class="ti ti-reload text-xl"></i>
+            </Button>
+            <Button disabled={!changes} onclick={saveProducts}>Save</Button>
+            <Button variant="outline" onclick={() => open = false}>Cancel</Button>
+            <Button variant="ghost" onclick={loadDefaultProducts}>Load default data</Button>
+            <Button variant="ghost" onclick={saveProductsBackup}>Save backup</Button>
+         </div>
+      </Tabs.Content>
+
+      <Tabs.Content value="customers-tab">
+         <h2 class="text-lg font-semibold my-3">Recipes</h2>
+
+         <span class="flex text-subtle mx-auto w-fit my-3">Soon...</span>
+      </Tabs.Content>
+   </Tabs.Root>
 </Dialog>

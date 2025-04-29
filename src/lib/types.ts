@@ -7,11 +7,14 @@ export type Product = {
       suggested: number;
       asking: number;
    };
-   salesHistory: Array<ProductSalesHistoryItem>;
    recipe: Array<ProductRecipeStep>;
 }
 
-export type ProductSalesHistoryItem = {
+export type SalesHistory = Array<SaleType>;
+
+export type SaleType = {
+   id: string;
+   createdAt?: number;
    customer: string;
    amount: number;
    price: number;

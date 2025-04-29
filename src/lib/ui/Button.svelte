@@ -15,7 +15,7 @@
 			},
 			size: {
 				default: "h-10 px-4 py-2 text-base gap-x-3 font-semibold",
-				sm: "h-9 px-3 gap-x-2 text-base font-semibold",
+				sm: "h-8 px-3 gap-x-2 text-sm font-semibold",
 				icon: "size-10 leading-0 aspect-square justify-center",
 			}
 		},
