@@ -45,9 +45,7 @@ export type IngredientsKeys =
    'viagor'
 ;
 
-export type IngredientsData = {
-   [K in IngredientsKeys]: {
-      label: string;
-      price: number;
-   }
-}
+export type IngredientsData = Map<IngredientsKeys, {
+   label: string;
+   price: number;
+}>

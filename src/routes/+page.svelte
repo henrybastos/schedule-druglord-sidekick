@@ -7,12 +7,12 @@
    // import Meter from '$lib/ui/Meter.svelte';
    import ConfigDialog from './schedule/ConfigDialog.svelte';
    import Button from '$lib/ui/Button.svelte';
-   import type { Product, SalesHistory } from '$lib/types';
+   import type { IngredientsKeys, Product, SalesHistory } from '$lib/types';
    import Input from '$lib/ui/Input.svelte';
    import SalesTabs from './schedule/SalesTabs.svelte';
    import _ from 'lodash';
    import { nanoid } from 'nanoid';
-   import { CustomersList } from '$lib';
+   import { CustomersList, ProductIngredients } from '$lib';
     import { SvelteMap } from 'svelte/reactivity';
 
    // {
@@ -39,6 +39,14 @@
    let currentSales = $derived(sales.get(selectedProduct) ?? []);
    
    let priceAdvantage = $derived((currentProduct?.price?.asking ?? 0) * amount > Math.floor((currentProduct?.price?.suggested ?? 0) * amount * 1.3))
+   let batchAmount = $state(0);
+   let batchPrice = $derived.by(() => {
+      if (currentProduct && batchAmount) {
+         return currentProduct.recipe
+            .map((step) => (ProductIngredients.get((step.nextProductIngredient as IngredientsKeys))?.price ?? 0) * batchAmount)
+            .reduce((a,b) => a+b);
+      }
+   });
 
    // let sellings = $derived.by(() => {
    //    if (product?.sellingsHistory) {
@@ -77,12 +85,9 @@
    }
 
    function addSale() {
-      const salesHistory = sales.get(selectedProduct);
-
-      if (selectedClient && salesHistory) {
-         if (!salesHistory) {
-            sales.set(selectedProduct, []);
-         }
+      
+      if (selectedClient) {
+         const salesHistory = sales.get(selectedProduct) ?? [];
 
          const newSale = {
             id: nanoid(),
@@ -101,6 +106,8 @@
 
    function saveProductsOnLocalStorage() {
       sales.set(selectedProduct, currentSales);
+      console.log(sales);
+      
       localStorage.setItem('products', JSON.stringify({ products: Array.from(products.values()) }));
       localStorage.setItem('schedule-druglord-sidekick-all-sales', JSON.stringify(Object.fromEntries(sales.entries())));
    }
@@ -122,7 +129,6 @@
 
          if (parsedSales) {
             sales = new SvelteMap(Object.entries(parsedSales));
-            console.log('SALES', sales);
          }
       }
 
@@ -240,6 +246,11 @@
                         {/if}
                      </div>
                   {/each}
+               </div>
+
+               <div class="inline-flex items-center gap-3">
+                  <Input type="number" bind:value={batchAmount} class="w-40"/>
+                  <span class="flex font-medium">${ batchPrice }</span>
                </div>
             {:else}
                <span class="flex text-muted">No recipe registered for { currentProduct.label }</span>

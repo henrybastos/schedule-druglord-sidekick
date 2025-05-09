@@ -15,10 +15,13 @@
    let { open = $bindable(), onchange } = $props();
    let products = $state(JSON.stringify(defaultProducts));
    let productsCM = $derived(typeof products == 'string' ? products : JSON.stringify(products, null, identationSize));
+   let customersCM = $state('');
    let errorLabel = $state();
    let changes = $state(false);
    let changesLabel = $derived(changes ? 'Unsaved changes' : undefined);
    let tabsValue = $state('products-tab');
+
+   const blankSales = $derived(JSON.parse(products).products?.map(({ value }: { value: string }) => ({ [value]: [] })));
 
    function saveProducts() {
       if (productsCM) {
@@ -77,18 +80,23 @@
       productsCM = products;
    }
 
+   function resetSales() {
+      console.log(blankSales);
+      console.log(JSON.stringify(JSON.parse(customersCM)));
+   }
+
    $effect(() => {
       if (open == true) {
          fetchProducts();
-         console.log('efect');
       } else if (open == false) {
          closeDialog();
       }
    })
 
    onMount(() => {
-      console.log('mount');
       fetchProducts();
+      customersCM = JSON.stringify(JSON.parse(localStorage.getItem('schedule-druglord-sidekick-all-sales') ?? JSON.stringify(blankSales)), null, 3)
+      // customersCM = JSON.stringify(JSON.parse(localStorage.getItem('schedule-druglord-sidekick-all-sales') ?? JSON.stringify(blankSales)), null, 3)
    });
 </script>
 
@@ -145,9 +153,21 @@
       </Tabs.Content>
 
       <Tabs.Content value="customers-tab">
-         <h2 class="text-lg font-semibold my-3">Recipes</h2>
+         <h2 class="text-lg font-semibold my-3">Customers</h2>
 
-         <span class="flex text-subtle mx-auto w-fit my-3">Soon...</span>
+         <ScrollArea orientation="both" class="max-h-[40rem]">
+            <CodeMirror
+               readonly
+               value={customersCM}
+               lang={json()}
+               theme={dracula}
+               class="text-base"
+            />
+         </ScrollArea>
+
+         <div class="flex flex-row-reverse mt-3 gap-x-3">
+            <Button variant="danger" onclick={resetSales}>Reset sales</Button>
+         </div>
       </Tabs.Content>
    </Tabs.Root>
 </Dialog>
